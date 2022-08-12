@@ -2,6 +2,7 @@ namespace DevTrackR.API.Entities
 {
   public class Package
   {
+    #region Constructor
     public Package(string title, decimal weight)
     {
       Code = Guid.NewGuid().ToString();
@@ -10,9 +11,10 @@ namespace DevTrackR.API.Entities
       Delivered = false;
       PostedAt = DateTime.Now;
       Updates = new List<PackageUpdate>();
-
     }
+    #endregion
 
+    #region Properties  
     public int Id { get; private set; }
 
     public string Code { get; private set; }
@@ -26,5 +28,24 @@ namespace DevTrackR.API.Entities
     public DateTime PostedAt { get; private set; }
 
     public List<PackageUpdate> Updates { get; private set; }
+    #endregion
+
+    #region Methods
+
+    public void AddUpdate(string status, bool delivered)
+    {
+      if (Delivered)
+      {
+        throw new Exception("Package is already delivered");
+      }
+      var update = new PackageUpdate(status, Id);
+      Updates.Add(update);
+
+      Delivered = delivered;
+    }
+
+    #endregion
+
+
   }
 }
