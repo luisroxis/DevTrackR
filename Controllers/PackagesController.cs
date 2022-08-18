@@ -1,8 +1,7 @@
 using DevTrackR.API.Entities;
 using DevTrackR.API.Models;
-using DevTrackR.API.Persistence;
+using DevTrackR.API.Persistences.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DevTrackR.API.Controllers
 {
@@ -10,19 +9,19 @@ namespace DevTrackR.API.Controllers
   [Route("api/packages")]
   public class PackagesController : ControllerBase
   {
-    private readonly DevTrackRContext _context;
+    private readonly IPackageRepository _repository;
     private readonly ILogger<PackagesController> _logger;
 
-    public PackagesController(DevTrackRContext context, ILogger<PackagesController> logger)
+    public PackagesController(IPackageRepository repository, ILogger<PackagesController> logger)
     {
-      _context = context;
+      _repository = repository;
       _logger = logger;
     }
 
     [HttpGet]
     public IActionResult GetaAll()
     {
-      var packages = _context.Packages;
+      var packages = _repository.GetAll();
 
       return Ok(packages);
     }
@@ -30,10 +29,7 @@ namespace DevTrackR.API.Controllers
     [HttpGet("{code}")]
     public IActionResult GetByCode(string code)
     {
-      var package = _context
-        .Packages
-        .Include(p => p.Updates)
-        .SingleOrDefault(p => p.Code == code);
+      var package = _repository.GetByCode(code);
 
       if (package == null)
       {
@@ -53,8 +49,7 @@ namespace DevTrackR.API.Controllers
 
       var package = new Package(model.Title, model.Weight);
 
-      _context.Packages.Add(package);
-      _context.SaveChanges();
+      _repository.Add(package);
 
       return CreatedAtAction(
         "GetByCode",
@@ -66,7 +61,7 @@ namespace DevTrackR.API.Controllers
     [HttpPost("{code}/updates")]
     public IActionResult PostUpdate(string code, PackageUpdateModel model)
     {
-      var package = _context.Packages.SingleOrDefault(p => p.Code == code);
+      var package = _repository.GetByCode(code);
 
       if (package == null)
       {
@@ -74,12 +69,9 @@ namespace DevTrackR.API.Controllers
       }
 
       package.AddUpdate(model.Status, model.Delivered);
-      _context.SaveChanges();
+      _repository.Update(package);
 
       return NoContent();
-
     }
-
-
   }
 }

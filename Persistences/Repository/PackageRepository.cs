@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DevTrackR.API.Entities;
 using DevTrackR.API.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace DevTrackR.API.Persistences.Repository
 {
@@ -26,17 +23,21 @@ namespace DevTrackR.API.Persistences.Repository
 
     public List<Package> GetAll()
     {
-      throw new NotImplementedException();
+      return _context.Packages.ToList();
     }
 
     public Package GetByCode(string code)
     {
-      throw new NotImplementedException();
+      return _context
+        .Packages
+        .Include(p => p.Updates)
+        .SingleOrDefault(p => p.Code == code);
     }
 
     public void Update(Package package)
     {
-      throw new NotImplementedException();
+      _context.Entry(package).State = EntityState.Modified;
+      _context.SaveChanges();
     }
   }
 }
