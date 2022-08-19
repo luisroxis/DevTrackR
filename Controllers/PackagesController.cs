@@ -22,7 +22,6 @@ namespace DevTrackR.API.Controllers
       _repository = repository;
       _logger = logger;
       _client = client;
-
     }
 
     [HttpGet]
@@ -46,6 +45,21 @@ namespace DevTrackR.API.Controllers
       return Ok(package);
     }
 
+    /// <summary>
+    ///  Cadastro de um pacote
+    /// </summary>
+    /// <remarks>
+    /// {
+    /// "title": "Pacote Demonstracao",
+    /// "weight": 1.5,
+    /// "senderName": "Luis Carlos",
+    /// "senderEmail": "test@example.com"
+    /// }
+    /// </remarks>
+    /// <param name="model">Dados de um pacote</param>
+    /// <returns>Objeto recem-criado</returns>
+    /// <response code="201">Cadastro realizado com sucesso</response>
+    /// <response code="400">Dados Invalidos</response>
     [HttpPost]
     public async Task<IActionResult> Post(PackageInputModel model)
     {
@@ -60,7 +74,7 @@ namespace DevTrackR.API.Controllers
 
       var message = new SendGridMessage
       {
-        From = new EmailAddress("roxisxprol@gmail.com", "roxisxprol@gmail.com"),
+        From = new EmailAddress("roxisxprol@gmail.com", "luisroxis"),
         Subject = "Your package was dispatched",
         PlainTextContent = $"Your package with code {package.Code} was dispatched"
       };

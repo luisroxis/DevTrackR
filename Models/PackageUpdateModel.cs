@@ -7,7 +7,7 @@ namespace DevTrackR.API.Models
 {
   public class PackageUpdateModel
   {
-    public string Status { get; set; }
+    public string? Status { get; set; }
     public bool Delivered { get; set; }
   }
 }
